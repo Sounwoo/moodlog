@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+    <head>
+
+        <!-- Webpage Title -->
+        <title>Home | MOOD LOG</title>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bulma CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
+        <!-- Google Font CSS -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Gugi&family=Londrina+Shadow&display=swap" rel="stylesheet">
+
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+        <script src="https://kit.fontawesome.com/3310fda83a.js" crossorigin="anonymous"></script>
+
+        <!-- moodlog JS CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='./css/common.css') }}">
+        <script src="{{ url_for('static',filename='./js/common.js') }}"></script>
+
+        <style>
+            body {
+                background-color: RGBA(232, 52, 78, 0.2);
+                min-height: 100vh;
+            }
+            #section_filters{
+                width: 80%;
+                margin: 0 auto;
+                max-width: 800px;
+                padding-top: 10px;
+            }
+            #section_main{
+                width: 80%;
+                margin: 0 auto;
+                max-width: 800px;
+                padding-top : 0px;
+            }
+            .section{
+                width: 100%;
+                max-width: 800px;
+                padding-top: 0px;
+            }
+
+            .section input[id*="slide"] {
+                display: none;
+            }
+
+            .section .slidewrap {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .section .slidelist {
+                white-space: nowrap;
+                font-size: 0;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .section .slidelist > li {
+                display: inline-block;
+                vertical-align: middle;
+                width: 100%;
+                transition: all .5s;
+            }
+
+            .section .slidelist > li > a {
+                display: block;
+                position: relative;
+            }
+
+            .section .slidelist > li > a img {
+                width: 100%;
+            }
+
+            .section .slidelist label {
+                position: absolute;
+                z-index: 10;
+                top: 50%;
+                transform: translateY(-50%);
+                padding: 50px;
+                cursor: pointer;
+            }
+
+            .section .slidelist .textbox {
+                position: absolute;
+                z-index: 1;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                line-height: 1.6;
+                text-align: center;
+            }
+
+            .section .slidelist .textbox h3 {
+                font-size: 36px;
+                color: #fff;;
+                transform: translateY(30px);
+                transition: all .5s;
+            }
+
+            .section .slidelist .textbox p {
+                font-size: 16px;
+                color: #fff;
+                opacity: 0;
+                transform: translateY(30px);
+                transition: all .5s;
+            }
+
+            .section input[id="slide01"]:checked ~ .slidewrap .slidelist > li {
+                transform: translateX(0%);
+            }
+
+            .section input[id="slide02"]:checked ~ .slidewrap .slidelist > li {
+                transform: translateX(-100%);
+            }
+
+            .section input[id="slide03"]:checked ~ .slidewrap .slidelist > li {
+                transform: translateX(-200%);
+            }
+
+            .section input[id="slide01"]:checked ~ .slidewrap li:nth-child(1) .textbox h3 {
+                opacity: 1;
+                transform: translateY(0);
+                transition-delay: .2s;
+            }
+
+            .section input[id="slide01"]:checked ~ .slidewrap li:nth-child(1) .textbox p {
+                opacity: 1;
+                transform: translateY(0);
+                transition-delay: .4s;
+            }
+
+            .section input[id="slide02"]:checked ~ .slidewrap li:nth-child(2) .textbox h3 {
+                opacity: 1;
+                transform: translateY(0);
+                transition-delay: .2s;
+            }
+
+            .section input[id="slide02"]:checked ~ .slidewrap li:nth-child(2) .textbox p {
+                opacity: 1;
+                transform: translateY(0);
+                transition-delay: .4s;
+            }
+
+            .section input[id="slide03"]:checked ~ .slidewrap li:nth-child(3) .textbox h3 {
+                opacity: 1;
+                transform: translateY(0);
+                transition-delay: .2s;
+            }
+
+            .section input[id="slide03"]:checked ~ .slidewrap li:nth-child(3) .textbox p {
+                opacity: 1;
+                transform: translateY(0);
+                transition-delay: .4s;
+            }
+
+            /* 페이징 */
+            .slide-pagelist {
+                text-align: center;
+                padding: 20px;
+            }
+
+            .slide-pagelist > li {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .slide-pagelist > li > label {
+                display: block;
+                padding: 8px 30px;
+                border-radius: 30px;
+                background: #ccc;
+                margin: 20px 10px;
+                cursor: pointer;
+            }
+
+            .section input[id="slide01"]:checked ~ .slidewrap .slide-pagelist > li:nth-child(1) > label {
+                background: #999;
+            }
+
+            .section input[id="slide02"]:checked ~ .slidewrap .slide-pagelist > li:nth-child(2) > label {
+                background: #999;
+            }
+
+            .section input[id="slide03"]:checked ~ .slidewrap .slide-pagelist > li:nth-child(3) > label {background:#999;}
+        </style>
+    </head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <span id="title">MOODLOG</span>
+            </a>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+               data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item">
+                    🎧 모아듣기
+                </a>
+                <a class="navbar-item">
+                    🎖 랭킹
+                </a>
+                <a class="navbar-item">
+                    🙋‍ 내 로그
+                </a>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <span style="margin-right:10px;">{{nickname}}님 안녕하세요.</span>
+                    <div class="buttons">
+                        <a class="button is-danger" href="javascript:logout()">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+        <section class="section" id="section_filters">
+            <div class="select is-rounded" id="divSelectMood">
+                <select>
+                    <option>🎧 전체무드</option>
+                    <option>🥳 파티에서 다 함께 즐기는 음악</option>
+                    <option>💃 내적댄스 유발</option>
+                </select>
+            </div>
+        </section>
+        <section class="section" id ="section_main">
+            <div>
+                <article class="media">
+                    <div class="media-content">
+                        <div class="content">
+                            <h4>{{순위}}1위 IVE - LOVE DIVE
+                                <nav class="level is-mobile">
+                                    <div class="level-left">
+                                        <a class="level-item">
+                                            <span class="icon is-small"><i class="fas fa-heart"></i></span><span
+                                                style="margin-left:5px">+1</span>
+                                        </a>
+                                    </div>
+                                </nav>
+                            </h4>
+                            <div class="section">
+                                <input type="radio" name="slide" id="slide01" checked>
+                                <input type="radio" name="slide" id="slide02">
+                                <input type="radio" name="slide" id="slide03">
+                                <div class="slidewrap">
+                                    <ul class="slidelist">
+                                        <li class="slideitem">
+                                            <a>
+                                                <div class="textbox">
+                                                </div>
+                                                <iframe width="100%" height="300" scrolling="no" frameborder="no"
+                                                        allow="autoplay"
+                                                        src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1244510536&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                                            </a>
+                                        </li>
+                                        <li class="slideitem">
+                                            <a>
+                                                <div class="textbox">
+                                                </div>
+                                                <iframe width="100%" height="300" scrolling="no" frameborder="no"
+                                                        allow="autoplay"
+                                                        src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/226832561&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                                                </iframe>
+                                            </a>
+                                        </li>
+                                        <li class="slideitem">
+                                            <a>
+                                                <div class="textbox">
+                                                </div>
+                                                <img src="./img/slide.jpg">
+                                            </a>
+                                        </li class="slideitem">
+                                    </ul>
+                                    <ul class="slide-pagelist">
+                                        <li><label for="slide01"></label></li>
+                                        <li><label for="slide02"></label></li>
+                                        <li><label for="slide03"></label></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+        <section class="section" id="section_mainbody">
+            <div class="box">
+                <article class="media">
+                    <figure class="media-left">
+                        <p class="image is-64x64">
+                            <img src="https://bulma.io/images/placeholders/128x128.png">
+                        </p>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <p>
+                                <strong>르탄이</strong> <small>sparta1122</small> <small>31분전</small>
+                                <br>
+                                공부하면서 심심해서 노래 공유해요 ㅋ
+                            </p>
+                            <p>
+                                <span class="tag is-info is-light">💃 내적댄스 유발</span>
+                            </p>
+                            <h4>IVE - LOVE DIVE</h4>
+                            <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay"
+                                    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1244510536&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                            <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
+                                <a href="https://soundcloud.com/l2share154" title="L2Share♫154" target="_blank"
+                                   style="color: #cccccc; text-decoration: none;">L2Share♫154</a> · <a
+                                    href="https://soundcloud.com/l2share154/ive-love-dive" title="IVE (아이브) - LOVE DIVE"
+                                    target="_blank" style="color: #cccccc; text-decoration: none;">IVE (아이브) - LOVE DIVE</a>
+                            </div>
+                        </div>
+                        <nav class="level is-mobile">
+                            <div class="level-left">
+                                <a class="level-item">
+                                    <span class="icon is-small"><i class="fas fa-heart"></i></span><span
+                                        style="margin-left:5px">+1</span>
+                                </a>
+                            </div>
+                        </nav>
+                    </div>
+                </article>
+            </div>
+            <div class="box">
+                <article class="media">
+                    <figure class="media-left">
+                        <p class="image is-64x64">
+                            <img src="https://bulma.io/images/placeholders/128x128.png">
+                        </p>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <p>
+                                <strong>이미주</strong> <small>sparta1122</small> <small>1시간전</small>
+                                <br>
+                                ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ<br>
+                                테스트테스트
+                            </p>
+                            <p>
+                                <span class="tag is-info is-light">🪩 추억의 KPOP, Back to the 00'</span>
+                            </p>
+                            <h4>러블리즈 - Ah-choo</h4>
+                            <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay"
+                                    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/226832561&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                            <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
+                                <a href="https://soundcloud.com/apieceofonion" title="ApieceofOnion" target="_blank"
+                                   style="color: #cccccc; text-decoration: none;">ApieceofOnion</a> · <a
+                                    href="https://soundcloud.com/apieceofonion/lovelyz-ah-choo-apieceofonion-remix"
+                                    title="Lovelyz(러블리즈) - Ah-Choo (APIECEOFONION REMIX)" target="_blank"
+                                    style="color: #cccccc; text-decoration: none;">Lovelyz(러블리즈) - Ah-Choo (APIECEOFONION
+                                REMIX)</a></div>
+                        </div>
+                        <nav class="level is-mobile">
+                            <div class="level-left">
+                                <a class="level-item">
+                                    <span class="icon is-small"><i class="fas fa-heart"></i></span><span
+                                        style="margin-left:5px">+1</span>
+                                </a>
+                            </div>
+                        </nav>
+                    </div>
+                </article>
+            </div>
+        </section>
+        <section class="sections" id="section_loading">
+            <button class="button is-primary is-loading">Loading</button>
+        </section>
+</body>
+</html>
